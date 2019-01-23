@@ -1,0 +1,74 @@
+FROM nvidia/cuda:8.0-cudnn7-runtime-ubuntu16.04
+
+
+### tensorflow
+
+# Pick up some TF dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cuda-command-line-tools-8-0 \
+        cuda-cublas-dev-8-0 \
+        cuda-cudart-dev-8-0 \
+        cuda-cufft-dev-8-0 \
+        cuda-curand-dev-8-0 \
+        cuda-cusolver-dev-8-0 \
+        cuda-cusparse-dev-8-0 \
+        curl \
+        libnccl2 \
+        libfreetype6-dev \
+        libhdf5-serial-dev \
+        libpng12-dev \
+        libzmq3-dev \
+        pkg-config \
+        rsync \
+        software-properties-common \
+        unzip \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+#RUN apt-get update && \
+#        apt-get install nvinfer-runtime-trt-repo-ubuntu1604-4.0.1-ga-cuda9.0 && \
+#        apt-get update && \
+#        apt-get install libnvinfer4=4.1.2-1+cuda9.0
+
+
+### miniconda
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
+
+RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \
+    libglib2.0-0 libxext6 libsm6 libxrender1 \
+    git mercurial subversion
+
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-4.5.12-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+
+RUN apt-get install -y curl grep sed dpkg && \
+    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
+    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
+    dpkg -i tini.deb && \
+    rm tini.deb && \
+    apt-get clean
+
+
+### package
+RUN conda create --name env python=3.6
+RUN conda install numpy scipy matplotlib dill tqdm cython -n env -y
+RUN conda install pytorch=0.3.1 cuda80 torchvision -c pytorch -n env -y
+RUN conda install -c conda-forge pycocotools -n env -y
+RUN conda install -c anaconda h5py tornado -n env -y
+
+### vim
+RUN apt-get install -y vim
+
+### start command
+RUN echo "conda activate env" >> ~/.bashrc
+
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
+CMD [ "/bin/bash" ]
