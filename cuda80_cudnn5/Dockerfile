@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn5-runtime-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 
 
 ### tensorflow
@@ -36,7 +36,7 @@ RUN apt-get install -y curl grep sed dpkg && \
     dpkg -i tini.deb && \
     rm tini.deb
 
-RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake
+RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake libprotobuf-dev protobuf-compiler
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -59,8 +59,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-4.5.12-Linux-x86
 ### package
 RUN conda create --name env python=3.6
 RUN conda install numpy scipy matplotlib dill tqdm cython pandas jupyter scikit-image h5py leveldb -n env -y
-RUN conda install pytorch=0.3.1 cuda80 torchvision -c pytorch -n env -y
-RUN conda install -c conda-forge pycocotools -n env -y
 RUN conda install -c anaconda h5py tornado opencv pyyaml boost lmdb -n env -y
 
 ### vim
