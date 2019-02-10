@@ -36,10 +36,10 @@ RUN apt-get install -y curl grep sed dpkg && \
     dpkg -i tini.deb && \
     rm tini.deb
 
+RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake
+
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake
 
 ### miniconda
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
