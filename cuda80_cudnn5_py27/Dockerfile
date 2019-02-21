@@ -36,7 +36,7 @@ RUN apt-get install -y curl grep sed dpkg && \
     dpkg -i tini.deb && \
     rm tini.deb
 
-RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake libprotobuf-dev protobuf-compiler vim
+RUN apt-get install -y libatlas-base-dev libgflags-dev libgoogle-glog-dev cmake libprotobuf-dev protobuf-compiler vim graphviz
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -59,7 +59,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-4.5.12-Linux-x86
 ### package
 RUN conda create --name env python=2.7
 RUN conda install numpy scipy matplotlib dill tqdm cython pandas jupyter scikit-image h5py leveldb -y -n env
-RUN conda install -c anaconda tornado opencv pyyaml boost lmdb -y -n env
+RUN conda install -c anaconda tornado opencv pyyaml boost lmdb pyqt graphviz -y -n env
 
 ### start command
 RUN echo "conda activate env" >> ~/.bashrc
