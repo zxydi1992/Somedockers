@@ -59,9 +59,8 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-4.5.12-Linux-x86
 ### package
 RUN conda create --name env python=2.7
 RUN source activate env
-RUN conda install numpy scipy matplotlib dill tqdm cython pandas jupyter scikit-image h5py leveldb -y
-RUN conda install -c anaconda tornado opencv pyyaml boost lmdb -y
-RUN pip install tensorflow-gpu==0.12.0 easydict
+RUN conda install numpy scipy matplotlib dill tqdm cython pandas jupyter scikit-image h5py leveldb -y -n env
+RUN conda install -c anaconda tornado opencv pyyaml boost lmdb -y -n env
 
 ### start command
 RUN echo "conda activate env" >> ~/.bashrc
